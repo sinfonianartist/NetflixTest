@@ -3,11 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/moviesFragment">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/moviesFragment"
         android:name="com.joshuahale.netflixtest.ui.movies.MoviesListFragment"
         android:label="@string/title_movies"
-        tools:layout="@layout/fragment_movies_list" />
+        tools:layout="@layout/fragment_movies_list" >
+        <action
+            android:id="@+id/action_moviesFragment_to_movieDetailsFragment"
+            app:destination="@id/movieDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/movieDetailsFragment"
+        android:name="com.joshuahale.netflixtest.ui.moviedetails.MovieDetailsFragment"
+        android:label="MovieDetailsFragment">
+        <argument
+            android:name="movie"
+            app:argType="com.joshuahale.netflixtest.model.movies.Movie"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

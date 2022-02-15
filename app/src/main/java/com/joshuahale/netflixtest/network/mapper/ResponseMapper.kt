@@ -4,8 +4,10 @@ import com.joshuahale.netflixtest.model.configuration.Configuration
 import com.joshuahale.netflixtest.model.movies.Movie
 import com.joshuahale.netflixtest.model.movies.TrendingMovies
 import com.joshuahale.netflixtest.network.responses.configuration.ConfigurationResponse
+import com.joshuahale.netflixtest.network.responses.movies.ImageType
 import com.joshuahale.netflixtest.network.responses.movies.MovieResult
 import com.joshuahale.netflixtest.network.responses.movies.TrendingMoviesResponse
+import com.joshuahale.netflixtest.network.responses.movies.getImageUrl
 
 object ResponseMapper {
 
@@ -33,9 +35,13 @@ object ResponseMapper {
     }
 
     private fun getMovie(movieResult: MovieResult, configuration: Configuration): Movie {
-        val url = "${configuration.baseUrl}${configuration.posterSize}${movieResult.posterPath}"
+        val backdropUrl = movieResult.getImageUrl(configuration, ImageType.BACKDROP)
+        val posterUrl = movieResult.getImageUrl(configuration, ImageType.POSTER)
         return Movie(
-            posterUrl = url
+            posterUrl = posterUrl,
+            backdropUrl = backdropUrl,
+            title = movieResult.title,
+            description = movieResult.overview
         )
     }
 }

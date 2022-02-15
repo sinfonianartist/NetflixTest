@@ -17,10 +17,5 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        supportFragmentManager
-            .beginTransaction()
-            .replace(binding.content.id, MoviesListFragment())
-            .commit()
     }
 }

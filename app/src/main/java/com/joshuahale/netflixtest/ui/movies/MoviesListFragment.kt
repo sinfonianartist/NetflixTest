@@ -6,9 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.joshuahale.netflixtest.R
 import com.joshuahale.netflixtest.databinding.FragmentMoviesListBinding
+import com.joshuahale.netflixtest.model.movies.Movie
+import com.joshuahale.netflixtest.ui.moviedetails.MovieDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -19,12 +25,16 @@ class MoviesListFragment : Fragment() {
 
     companion object {
         private const val COLUMNS = 3
+
+        fun newInstance(): MoviesListFragment = MoviesListFragment().apply {  }
     }
 
     private lateinit var binding: FragmentMoviesListBinding
     private val viewModel: MoviesListViewModel by viewModels()
     private val disposable = CompositeDisposable()
-    private var moviesAdapter = TrendingMoviesAdapter()
+    private var moviesAdapter = TrendingMoviesAdapter { movie ->
+        showMovieDetails(movie)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +67,13 @@ class MoviesListFragment : Fragment() {
                 { error -> error.printStackTrace() }
             )
         )
+    }
+
+    private fun showMovieDetails(movie: Movie) {
+        val action = MoviesListFragmentDirections
+            .actionMoviesFragmentToMovieDetailsFragment()
+            .setMovie(movie)
+        findNavController().navigate(action)
     }
 
     override fun onPause() {
