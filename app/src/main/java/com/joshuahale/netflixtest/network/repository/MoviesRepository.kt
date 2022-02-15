@@ -11,9 +11,14 @@ class MoviesRepository @Inject constructor(private val apiHelper: MoviesApiHelpe
 
     fun getTrendingMovies(
         mediaType: String = "movie",
-        timeWindow: String = "week"
+        timeWindow: String = "week",
+        page: Int
     ): Single<TrendingMovies> {
-        return apiHelper.getTrendingMovies(MoviesConstants.API_KEY, mediaType, timeWindow)
+        return apiHelper.getTrendingMovies(
+            mediaType = mediaType,
+            timeWindow = timeWindow,
+            apiKey = MoviesConstants.API_KEY,
+            page = page)
             .map { response -> ResponseMapper.getTrendingMovies(response)}
     }
 }

@@ -6,8 +6,14 @@ class MoviesApiHelperImpl @Inject constructor(
     private val apiService: MoviesApiService) : MoviesApiHelper {
 
     override fun getTrendingMovies(
-        apiKey: String,
         mediaType: String,
-        timeWindow: String
-    ) = apiService.getTrendingMovies(apiKey, mediaType, timeWindow)
+        timeWindow: String,
+        apiKey: String,
+        page: Int
+    ) = apiService.getTrendingMovies(
+        mediaType = mediaType,
+        timeWindow = timeWindow,
+        apiKey = apiKey,
+        page = page
+    )
 }

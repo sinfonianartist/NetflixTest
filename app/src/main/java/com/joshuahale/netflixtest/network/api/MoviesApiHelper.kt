@@ -6,8 +6,9 @@ import io.reactivex.Single
 interface MoviesApiHelper {
 
     fun getTrendingMovies(
-        apiKey: String,
         mediaType: String,
-        timeWindow: String
+        timeWindow: String,
+        apiKey: String,
+        page: Int
     ): Single<TrendingMoviesResponse>
 }
