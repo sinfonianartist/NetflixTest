@@ -1,20 +1,15 @@
 package com.joshuahale.netflixtest.ui.movies
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshuahale.netflixtest.R
 import com.joshuahale.netflixtest.databinding.FragmentMoviesListBinding
 import com.joshuahale.netflixtest.model.movies.Movie
-import com.joshuahale.netflixtest.ui.moviedetails.MovieDetailsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -39,6 +34,7 @@ class MoviesListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setHasOptionsMenu(true)
         binding = FragmentMoviesListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -73,6 +69,27 @@ class MoviesListFragment : Fragment() {
             .actionMoviesFragmentToMovieDetailsFragment()
             .setMovie(movie)
         findNavController().navigate(action)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.main_menu, menu)
+
+        val searchItem = menu.findItem(R.id.action_search)
+        val searchView = searchItem.actionView as SearchView
+        searchView.maxWidth = Integer.MAX_VALUE
+        searchView.queryHint = getString(R.string.search_movies)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchItem.collapseActionView()
+                return false
+            }
+
+            override fun onQueryTextChange(s: String): Boolean {
+                return false
+            }
+        })
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onPause() {

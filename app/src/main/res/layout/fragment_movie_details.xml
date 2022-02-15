@@ -17,8 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="@dimen/floating_icon_size"
+        android:layout_height="@dimen/floating_icon_size"
         android:src="@drawable/ic_play"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
