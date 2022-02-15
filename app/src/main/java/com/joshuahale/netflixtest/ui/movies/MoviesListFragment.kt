@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.joshuahale.netflixtest.R
+import com.joshuahale.netflixtest.constants.MoviesConstants
 import com.joshuahale.netflixtest.databinding.FragmentMoviesListBinding
 import com.joshuahale.netflixtest.model.movies.Movie
 import com.joshuahale.netflixtest.ui.recyclerview.GridViewSpacingDecoration
@@ -19,10 +20,6 @@ import io.reactivex.schedulers.Schedulers
 
 @AndroidEntryPoint
 class MoviesListFragment : Fragment() {
-
-    companion object {
-        private const val COLUMNS = 3
-    }
 
     private lateinit var binding: FragmentMoviesListBinding
     private val viewModel: MoviesListViewModel by viewModels()
@@ -49,9 +46,9 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun setupUi() {
-        activity?.title = getString(R.string.movie_list)
+        activity?.title = getString(R.string.trending_movies)
         lifecycle.addObserver(viewModel)
-        val layoutManager = GridLayoutManager(context, COLUMNS)
+        val layoutManager = GridLayoutManager(context, MoviesConstants.NUMBER_OF_POSTER_COLUMNS)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = moviesAdapter
         val spacing = resources.getDimensionPixelSize(R.dimen.grid_view_spacing)

@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Netflix Test</string>
     <string name="movie_details">Movie Details</string>
-    <string name="movie_list">Movie List</string>
     <string name="search">Search</string>
     <string name="search_movies">Search Movies</string>
     <string name="title_movies">Movies</string>
+    <string name="trending_movies">Trending Movies</string>
 </resources>
