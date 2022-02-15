@@ -39,7 +39,7 @@ class MoviesListViewModel @Inject constructor(
     }
 
     fun getNextMovies() {
-        if (isLoading == false) {
+        if (!isLoading) {
             if (currentMovieType == MovieType.SearchResults) {
                 searchMovies()
             } else {
@@ -66,17 +66,26 @@ class MoviesListViewModel @Inject constructor(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ moviesData ->
                 handleMoviesData(moviesData)
-            }, { e -> e.printStackTrace()})
+            }, { e ->
+                viewStateSubject.onError(e)
+                viewStateSubject = PublishSubject.create()
+            })
         )
     }
 
     private fun searchMovies() {
         disposable.add(repository.searchMovies(searchQuery, nextPage)
             .subscribeOn(Schedulers.io())
+            .doOnSubscribe { isLoading = true }
+            .doOnSuccess { isLoading = false }
+            .doOnError { isLoading = false }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ moviesData ->
                 handleMoviesData(moviesData)
-            }, { e -> e.printStackTrace()})
+            }, { e ->
+                viewStateSubject.onError(e)
+                viewStateSubject = PublishSubject.create()
+            })
         )
     }
 

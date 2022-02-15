@@ -1,7 +1,6 @@
 package com.joshuahale.netflixtest.ui.moviedetails
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +36,7 @@ class MovieDetailsFragment : Fragment() {
         binding.description.text = movie.description
         Picasso.get()
             .load(movie.backdropUrl)
+            .placeholder(R.drawable.ic_placeholder)
             .into(binding.backdropImage)
     }
 }

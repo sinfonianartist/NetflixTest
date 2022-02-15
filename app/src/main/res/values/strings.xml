@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Netflix Test</string>
+    <string name="error_network_description">A network error has occurred. Please try again later.</string>
+    <string name="error_title">Error</string>
     <string name="movie_details">Movie Details</string>
+    <string name="ok">OK</string>
+    <string name="retry">Retry</string>
     <string name="search">Search</string>
     <string name="search_movies">Search Movies</string>
     <string name="title_movies">Movies</string>

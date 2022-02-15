@@ -3,6 +3,7 @@ package com.joshuahale.netflixtest.ui.movies
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.joshuahale.netflixtest.R
 import com.joshuahale.netflixtest.databinding.MoviePosterBinding
 import com.joshuahale.netflixtest.model.movies.Movie
 import com.squareup.picasso.Picasso
@@ -25,6 +26,7 @@ class MoviesAdapter(private val onItemClicked: (Movie) -> Unit
             Picasso
                 .get()
                 .load(movie.posterUrl)
+                .placeholder(R.drawable.ic_placeholder_poster)
                 .into(binding.posterView)
         }
     }

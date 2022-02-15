@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshuahale.netflixtest.R
 import com.joshuahale.netflixtest.constants.MoviesConstants
 import com.joshuahale.netflixtest.databinding.FragmentMoviesListBinding
+import com.joshuahale.netflixtest.error.ErrorDialogBuilder
+import com.joshuahale.netflixtest.error.interfaces.OnErrorDialogListener
 import com.joshuahale.netflixtest.model.movies.Movie
 import com.joshuahale.netflixtest.ui.recyclerview.GridViewSpacingDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,7 +22,7 @@ import io.reactivex.schedulers.Schedulers
 
 
 @AndroidEntryPoint
-class MoviesListFragment : Fragment() {
+class MoviesListFragment : Fragment(), OnErrorDialogListener {
 
     private lateinit var binding: FragmentMoviesListBinding
     private val viewModel: MoviesListViewModel by viewModels()
@@ -75,6 +77,9 @@ class MoviesListFragment : Fragment() {
                     moviesAdapter.addMovies(state.movies, state.clearMovies)
                 }, { e ->
                     e.printStackTrace()
+                    ErrorDialogBuilder.getErrorDialog(requireContext(),
+                        getString(R.string.error_network_description), this)
+
                 })
         )
     }
@@ -91,6 +96,10 @@ class MoviesListFragment : Fragment() {
         inflater.inflate(R.menu.main_menu, menu)
         setupSearch(menu.findItem(R.id.action_search))
         return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onRetryClicked() {
+        viewModel.getNextMovies()
     }
 
     private fun setupSearch(searchItem: MenuItem) {

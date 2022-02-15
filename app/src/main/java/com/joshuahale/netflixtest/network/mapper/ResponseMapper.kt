@@ -1,5 +1,6 @@
 package com.joshuahale.netflixtest.network.mapper
 
+import android.util.Log
 import com.joshuahale.netflixtest.model.configuration.Configuration
 import com.joshuahale.netflixtest.model.movies.Movie
 import com.joshuahale.netflixtest.model.movies.MoviesData
@@ -30,6 +31,7 @@ object ResponseMapper {
         response.moviesListResult?.let { results ->
             for (movie in results) {
                 movies.add(getMovie(movie, backdropPath, posterPath))
+                Log.e("ResponseMapper", movies[0].posterUrl)
             }
         }
         return MoviesData(
