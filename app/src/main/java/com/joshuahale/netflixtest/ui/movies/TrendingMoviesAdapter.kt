@@ -9,7 +9,7 @@ import com.squareup.picasso.Picasso
 
 class TrendingMoviesAdapter(private val onItemClicked: (Movie) -> Unit) : RecyclerView.Adapter<TrendingMoviesAdapter.MoviesViewHolder>() {
 
-    private val movies = ArrayList<Movie>()
+    private var movies = ArrayList<Movie>()
 
     class MoviesViewHolder(
         private val binding: MoviePosterBinding,
@@ -42,7 +42,10 @@ class TrendingMoviesAdapter(private val onItemClicked: (Movie) -> Unit) : Recycl
 
     override fun getItemCount() = movies.size
 
-    fun addMovies(newMovies: List<Movie>) {
+    fun addMovies(newMovies: List<Movie>, clearList: Boolean) {
+        if (clearList) {
+            movies = ArrayList()
+        }
         movies.addAll(newMovies)
         notifyDataSetChanged()
     }

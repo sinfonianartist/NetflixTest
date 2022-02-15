@@ -43,6 +43,7 @@ class MoviesListFragment : Fragment() {
         super.onResume()
         setupUi()
         setupObserver()
+        viewModel.getNextMovies()
     }
 
     private fun setupUi() {
@@ -54,13 +55,15 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun setupObserver() {
-        disposable.add(viewModel.onTrendingMoviesFound()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { movies -> moviesAdapter.addMovies(movies)},
-                { error -> error.printStackTrace() }
-            )
+        disposable.add(
+            viewModel.onViewStateChanged()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ state ->
+                    moviesAdapter.addMovies(state.movies, state.clearMovies)
+                }, { e ->
+                    e.printStackTrace()
+                })
         )
     }
 
@@ -81,6 +84,7 @@ class MoviesListFragment : Fragment() {
         searchView.queryHint = getString(R.string.search_movies)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
+                viewModel.updateSearchQuery(query)
                 searchItem.collapseActionView()
                 return false
             }

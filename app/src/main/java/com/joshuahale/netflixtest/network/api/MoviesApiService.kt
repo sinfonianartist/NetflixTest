@@ -1,7 +1,7 @@
 package com.joshuahale.netflixtest.network.api
 
 import com.joshuahale.netflixtest.network.responses.configuration.ConfigurationResponse
-import com.joshuahale.netflixtest.network.responses.movies.TrendingMoviesResponse
+import com.joshuahale.netflixtest.network.responses.movies.MoviesResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -15,10 +15,17 @@ interface MoviesApiService {
         @Path("time_window") timeWindow: String,
         @Query("api_key") apiKey: String,
         @Query("page") page: Int,
-    ): Single<TrendingMoviesResponse>
+    ): Single<MoviesResponse>
 
     @GET("configuration")
     fun getConfiguration(
         @Query("api_key") apiKey: String
     ): Single<ConfigurationResponse>
+
+    @GET("search/movie")
+    fun searchMovies(
+        @Query("query") searchQuery: String,
+        @Query("api_key") apiKey: String,
+        @Query("page") page: Int
+    ): Single<MoviesResponse>
 }

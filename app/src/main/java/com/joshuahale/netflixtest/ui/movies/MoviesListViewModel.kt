@@ -1,9 +1,8 @@
 package com.joshuahale.netflixtest.ui.movies
 
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import com.joshuahale.netflixtest.model.movies.Movie
+import com.joshuahale.netflixtest.model.movies.MoviesData
 import com.joshuahale.netflixtest.network.repository.MoviesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable
@@ -18,43 +17,84 @@ class MoviesListViewModel @Inject constructor(
     private val repository: MoviesRepository
 ) : ViewModel(), DefaultLifecycleObserver {
 
-    private val disposable = CompositeDisposable()
-    private var moviesSubject = createSubject()
-    private var currentPage = 1
+    private var nextPage = 1
     private var totalPages = 0
 
-    override fun onResume(owner: LifecycleOwner) {
-        super.onResume(owner)
-        fetchTrendingMovies()
+    private var searchQuery = ""
+
+    private val disposable = CompositeDisposable()
+    private var currentMovieType: MovieType = MovieType.Trending
+    private var viewStateSubject = PublishSubject.create<MoviesListViewState>()
+    private var shouldClearList: Boolean = false
+
+    private enum class MovieType {
+        SearchResults,
+        Trending
+    }
+
+    fun getNextMovies() {
+        if (currentMovieType == MovieType.SearchResults) {
+            checkIfMovieTypeSwapped(MovieType.SearchResults)
+            searchMovies()
+        } else {
+            checkIfMovieTypeSwapped(MovieType.Trending)
+            fetchTrendingMovies()
+        }
+    }
+
+    fun updateSearchQuery(query: String) {
+        if (searchQuery != query) {
+            nextPage = 1
+            shouldClearList = true
+        }
+        this.searchQuery = query
+        searchMovies()
     }
 
     private fun fetchTrendingMovies() {
-        disposable.add(repository.getTrendingMovies(page = currentPage)
+        disposable.add(repository.getTrendingMovies(page = nextPage)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { trendingMovies ->
-                    currentPage = trendingMovies.page
-                    totalPages = trendingMovies.totalPages
-                    moviesSubject.onNext(trendingMovies.movies)
-                },
-                { error ->
-                    moviesSubject.onError(error)
-                    moviesSubject = createSubject()
-                }
-            )
+            .subscribe({ moviesData ->
+                handleMoviesData(moviesData)
+            }, { e -> e.printStackTrace()})
         )
     }
 
-    private fun createSubject() = PublishSubject.create<List<Movie>>()
+    private fun searchMovies() {
+        disposable.add(repository.searchMovies(searchQuery, nextPage)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ moviesData ->
+                handleMoviesData(moviesData)
+            }, { e -> e.printStackTrace()})
+        )
+    }
 
-    fun onTrendingMoviesFound(): Observable<List<Movie>> {
-        return moviesSubject
+    private fun handleMoviesData(moviesData: MoviesData) {
+        nextPage = moviesData.page + 1
+        totalPages = moviesData.totalPages
+
+        viewStateSubject.onNext(MoviesListViewState(
+            clearMovies = shouldClearList,
+            movies = moviesData.movies))
+        shouldClearList = false
+    }
+
+    private fun checkIfMovieTypeSwapped(movieType: MovieType) {
+        if (currentMovieType != movieType) {
+            currentMovieType = movieType
+            nextPage = 1
+            shouldClearList = true
+        }
+    }
+
+    fun onViewStateChanged(): Observable<MoviesListViewState> {
+        return viewStateSubject
     }
 
     override fun onCleared() {
         disposable.clear()
         super.onCleared()
     }
-
 }

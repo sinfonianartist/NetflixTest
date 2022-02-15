@@ -1,7 +1,5 @@
 package com.joshuahale.netflixtest.network.api
 
-import com.joshuahale.netflixtest.network.responses.configuration.ConfigurationResponse
-import io.reactivex.Single
 import javax.inject.Inject
 
 class MoviesApiHelperImpl @Inject constructor(
@@ -15,6 +13,16 @@ class MoviesApiHelperImpl @Inject constructor(
     ) = apiService.getTrendingMovies(
         mediaType = mediaType,
         timeWindow = timeWindow,
+        apiKey = apiKey,
+        page = page
+    )
+
+    override fun searchMovies(
+        query: String,
+        apiKey: String,
+        page: Int
+    ) = apiService.searchMovies(
+        searchQuery = query,
         apiKey = apiKey,
         page = page
     )
