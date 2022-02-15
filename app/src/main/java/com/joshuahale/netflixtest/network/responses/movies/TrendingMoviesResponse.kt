@@ -1,4 +1,4 @@
-package com.joshuahale.netflixtest.network.responses
+package com.joshuahale.netflixtest.network.responses.movies
 
 import com.google.gson.annotations.SerializedName
 

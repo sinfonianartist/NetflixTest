@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshuahale.netflixtest.databinding.FragmentMoviesListBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,9 +17,14 @@ import io.reactivex.schedulers.Schedulers
 @AndroidEntryPoint
 class MoviesListFragment : Fragment() {
 
+    companion object {
+        private const val COLUMNS = 3
+    }
+
     private lateinit var binding: FragmentMoviesListBinding
     private val viewModel: MoviesListViewModel by viewModels()
     private val disposable = CompositeDisposable()
+    private var moviesAdapter = TrendingMoviesAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,11 +43,9 @@ class MoviesListFragment : Fragment() {
 
     private fun setupUi() {
         lifecycle.addObserver(viewModel)
-        val layoutManager = LinearLayoutManager(
-            context, LinearLayoutManager.VERTICAL, false
-        )
+        val layoutManager = GridLayoutManager(context, COLUMNS)
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.adapter = moviesAdapter
     }
 
     private fun setupObserver() {
@@ -49,7 +53,7 @@ class MoviesListFragment : Fragment() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { movies -> },
+                { movies -> moviesAdapter.addMovies(movies)},
                 { error -> error.printStackTrace() }
             )
         )

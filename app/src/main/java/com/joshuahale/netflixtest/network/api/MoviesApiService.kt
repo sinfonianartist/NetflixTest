@@ -1,6 +1,7 @@
 package com.joshuahale.netflixtest.network.api
 
-import com.joshuahale.netflixtest.network.responses.TrendingMoviesResponse
+import com.joshuahale.netflixtest.network.responses.configuration.ConfigurationResponse
+import com.joshuahale.netflixtest.network.responses.movies.TrendingMoviesResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -15,4 +16,9 @@ interface MoviesApiService {
         @Query("api_key") apiKey: String,
         @Query("page") page: Int,
     ): Single<TrendingMoviesResponse>
+
+    @GET("configuration")
+    fun getConfiguration(
+        @Query("api_key") apiKey: String
+    ): Single<ConfigurationResponse>
 }

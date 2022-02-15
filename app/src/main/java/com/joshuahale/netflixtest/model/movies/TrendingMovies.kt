@@ -1,4 +1,4 @@
-package com.joshuahale.netflixtest.model
+package com.joshuahale.netflixtest.model.movies
 
 data class TrendingMovies (
     val page: Int,

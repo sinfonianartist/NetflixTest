@@ -3,8 +3,7 @@ package com.joshuahale.netflixtest.ui.movies
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
-import com.joshuahale.netflixtest.model.Movie
-import com.joshuahale.netflixtest.model.TrendingMovies
+import com.joshuahale.netflixtest.model.movies.Movie
 import com.joshuahale.netflixtest.network.repository.MoviesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Observable

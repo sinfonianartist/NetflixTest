@@ -1,6 +1,7 @@
 package com.joshuahale.netflixtest.network.api
 
-import com.joshuahale.netflixtest.network.responses.TrendingMoviesResponse
+import com.joshuahale.netflixtest.network.responses.configuration.ConfigurationResponse
+import com.joshuahale.netflixtest.network.responses.movies.TrendingMoviesResponse
 import io.reactivex.Single
 
 interface MoviesApiHelper {
@@ -11,4 +12,6 @@ interface MoviesApiHelper {
         apiKey: String,
         page: Int
     ): Single<TrendingMoviesResponse>
+
+    fun getConfiguration(apiKey: String): Single<ConfigurationResponse>
 }
