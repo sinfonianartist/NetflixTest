@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.joshuahale.netflixtest.R
 import com.joshuahale.netflixtest.constants.MoviesConstants
 import com.joshuahale.netflixtest.databinding.FragmentMoviesListBinding
@@ -35,12 +36,12 @@ class MoviesListFragment : Fragment() {
     ): View {
         setHasOptionsMenu(true)
         binding = FragmentMoviesListBinding.inflate(inflater, container, false)
+        setupUi()
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        setupUi()
         setupObserver()
         viewModel.getNextMovies()
     }
@@ -54,6 +55,15 @@ class MoviesListFragment : Fragment() {
         val spacing = resources.getDimensionPixelSize(R.dimen.grid_view_spacing)
         val spacingDecoration = GridViewSpacingDecoration(spacing)
         binding.recyclerView.addItemDecoration(spacingDecoration)
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val lastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition()
+                if (lastVisibleItem == moviesAdapter.itemCount - 1) {
+                    viewModel.getNextMovies()
+                }
+            }
+        })
     }
 
     private fun setupObserver() {

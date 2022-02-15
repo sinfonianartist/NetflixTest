@@ -1,6 +1,7 @@
 package com.joshuahale.netflixtest.ui.movies
 
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.joshuahale.netflixtest.model.movies.MoviesData
 import com.joshuahale.netflixtest.network.repository.MoviesRepository
@@ -27,6 +28,8 @@ class MoviesListViewModel @Inject constructor(
     private var viewStateSubject = PublishSubject.create<MoviesListViewState>()
     private var shouldClearList: Boolean = false
 
+    private var isLoading = false
+
     fun setMovieType(movieType: MovieType) {
         if (movieType != currentMovieType) {
             currentMovieType = movieType
@@ -36,10 +39,12 @@ class MoviesListViewModel @Inject constructor(
     }
 
     fun getNextMovies() {
-        if (currentMovieType == MovieType.SearchResults) {
-            searchMovies()
-        } else {
-            fetchTrendingMovies()
+        if (isLoading == false) {
+            if (currentMovieType == MovieType.SearchResults) {
+                searchMovies()
+            } else {
+                fetchTrendingMovies()
+            }
         }
     }
 
@@ -55,6 +60,9 @@ class MoviesListViewModel @Inject constructor(
     private fun fetchTrendingMovies() {
         disposable.add(repository.getTrendingMovies(page = nextPage)
             .subscribeOn(Schedulers.io())
+            .doOnSubscribe { isLoading = true }
+            .doOnSuccess { isLoading = false }
+            .doOnError { isLoading = false }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ moviesData ->
                 handleMoviesData(moviesData)
@@ -86,8 +94,9 @@ class MoviesListViewModel @Inject constructor(
         return viewStateSubject
     }
 
-    override fun onCleared() {
+    override fun onPause(owner: LifecycleOwner) {
         disposable.clear()
-        super.onCleared()
+        nextPage = 1
+        super.onPause(owner)
     }
 }
