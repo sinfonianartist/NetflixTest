@@ -25,8 +25,6 @@ class MoviesListFragment : Fragment() {
 
     companion object {
         private const val COLUMNS = 3
-
-        fun newInstance(): MoviesListFragment = MoviesListFragment().apply {  }
     }
 
     private lateinit var binding: FragmentMoviesListBinding
@@ -52,6 +50,7 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun setupUi() {
+        activity?.title = getString(R.string.movie_list)
         lifecycle.addObserver(viewModel)
         val layoutManager = GridLayoutManager(context, COLUMNS)
         binding.recyclerView.layoutManager = layoutManager
