@@ -27,22 +27,23 @@ class MoviesListViewModel @Inject constructor(
     private var viewStateSubject = PublishSubject.create<MoviesListViewState>()
     private var shouldClearList: Boolean = false
 
-    private enum class MovieType {
-        SearchResults,
-        Trending
+    fun setMovieType(movieType: MovieType) {
+        if (movieType != currentMovieType) {
+            currentMovieType = movieType
+            nextPage = 1
+            shouldClearList = true
+        }
     }
 
     fun getNextMovies() {
         if (currentMovieType == MovieType.SearchResults) {
-            checkIfMovieTypeSwapped(MovieType.SearchResults)
             searchMovies()
         } else {
-            checkIfMovieTypeSwapped(MovieType.Trending)
             fetchTrendingMovies()
         }
     }
 
-    fun updateSearchQuery(query: String) {
+    fun searchMovies(query: String) {
         if (searchQuery != query) {
             nextPage = 1
             shouldClearList = true
@@ -79,14 +80,6 @@ class MoviesListViewModel @Inject constructor(
             clearMovies = shouldClearList,
             movies = moviesData.movies))
         shouldClearList = false
-    }
-
-    private fun checkIfMovieTypeSwapped(movieType: MovieType) {
-        if (currentMovieType != movieType) {
-            currentMovieType = movieType
-            nextPage = 1
-            shouldClearList = true
-        }
     }
 
     fun onViewStateChanged(): Observable<MoviesListViewState> {

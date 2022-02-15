@@ -2,14 +2,14 @@ package com.joshuahale.netflixtest.ui.movies
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshuahale.netflixtest.databinding.MoviePosterBinding
 import com.joshuahale.netflixtest.model.movies.Movie
 import com.squareup.picasso.Picasso
 
-class TrendingMoviesAdapter(private val onItemClicked: (Movie) -> Unit) : RecyclerView.Adapter<TrendingMoviesAdapter.MoviesViewHolder>() {
-
-    private var movies = ArrayList<Movie>()
+class MoviesAdapter(private val onItemClicked: (Movie) -> Unit
+) : ListAdapter<Movie, MoviesAdapter.MoviesViewHolder>(MovieDiffCallback()) {
 
     class MoviesViewHolder(
         private val binding: MoviePosterBinding,
@@ -32,21 +32,17 @@ class TrendingMoviesAdapter(private val onItemClicked: (Movie) -> Unit) : Recycl
         MoviesViewHolder(
             MoviePosterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         ) {
-            onItemClicked(movies[it])
+            onItemClicked(currentList[it])
         }
 
 
     override fun onBindViewHolder(holder: MoviesViewHolder, position: Int) {
-        holder.bind(movies[position])
+        holder.bind(currentList[position])
     }
 
-    override fun getItemCount() = movies.size
+    override fun getItemCount() = currentList.size
 
     fun addMovies(newMovies: List<Movie>, clearList: Boolean) {
-        if (clearList) {
-            movies = ArrayList()
-        }
-        movies.addAll(newMovies)
-        notifyDataSetChanged()
+        submitList(newMovies)
     }
 }

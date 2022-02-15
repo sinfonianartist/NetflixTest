@@ -41,7 +41,8 @@ object ResponseMapper {
             posterUrl = posterUrl,
             backdropUrl = backdropUrl,
             title = movieResult.title,
-            description = movieResult.overview
+            description = movieResult.overview,
+            id = movieResult.id
         )
     }
 }

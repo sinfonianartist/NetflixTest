@@ -8,5 +8,6 @@ data class Movie(
     val backdropUrl: String,
     val posterUrl: String,
     val title: String,
-    val description: String
+    val description: String,
+    val id: Int
 ): Parcelable

@@ -10,10 +10,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.joshuahale.netflixtest.R
 import com.joshuahale.netflixtest.databinding.FragmentMoviesListBinding
 import com.joshuahale.netflixtest.model.movies.Movie
+import com.joshuahale.netflixtest.ui.recyclerview.GridViewSpacingDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+
 
 @AndroidEntryPoint
 class MoviesListFragment : Fragment() {
@@ -25,7 +27,7 @@ class MoviesListFragment : Fragment() {
     private lateinit var binding: FragmentMoviesListBinding
     private val viewModel: MoviesListViewModel by viewModels()
     private val disposable = CompositeDisposable()
-    private var moviesAdapter = TrendingMoviesAdapter { movie ->
+    private var moviesAdapter = MoviesAdapter { movie ->
         showMovieDetails(movie)
     }
 
@@ -52,6 +54,9 @@ class MoviesListFragment : Fragment() {
         val layoutManager = GridLayoutManager(context, COLUMNS)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = moviesAdapter
+        val spacing = resources.getDimensionPixelSize(R.dimen.grid_view_spacing)
+        val spacingDecoration = GridViewSpacingDecoration(spacing)
+        binding.recyclerView.addItemDecoration(spacingDecoration)
     }
 
     private fun setupObserver() {
@@ -77,15 +82,30 @@ class MoviesListFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.main_menu, menu)
+        setupSearch(menu.findItem(R.id.action_search))
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
 
-        val searchItem = menu.findItem(R.id.action_search)
+    private fun setupSearch(searchItem: MenuItem) {
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                viewModel.setMovieType(MovieType.Trending)
+                viewModel.getNextMovies()
+                return true
+            }
+
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                viewModel.setMovieType(MovieType.SearchResults)
+                return true
+            }
+        })
         val searchView = searchItem.actionView as SearchView
+        searchView.setIconifiedByDefault(false)
         searchView.maxWidth = Integer.MAX_VALUE
         searchView.queryHint = getString(R.string.search_movies)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                viewModel.updateSearchQuery(query)
-                searchItem.collapseActionView()
+                viewModel.searchMovies(query)
                 return false
             }
 
@@ -93,7 +113,6 @@ class MoviesListFragment : Fragment() {
                 return false
             }
         })
-        return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onPause() {
